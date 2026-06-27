@@ -1,184 +1,205 @@
-.counter {
-  font-size: 16px;
-  padding: 5px 10px;
-  border-radius: 5px;
-  color: var(--accent);
-  background: var(--accent-bg);
-  border: 2px solid transparent;
-  transition: border-color 0.3s;
-  margin-bottom: 24px;
+/* ===== RESET ROOTA =====
+   index.css definiuje #root z fixed width 1126px i border.
+   Nadpisujemy — blog sam zarządza szerokością przez .blog-layout. */
 
-  &:hover {
-    border-color: var(--accent-border);
-  }
-  &:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-  }
-}
+#root {
+  /* min-height: 100svh — minimalna wysokość viewportu.
+     "vh" to jednostka = 1% wysokości okna przeglądarki.
+     Problem z vh na mobile: paski przeglądarki (adres, nawigacja) zmieniają wysokość viewport.
+     100vh może być za duże — zawartość wychodzi poza ekran.
+     "svh" (small viewport height) = 1% MNIEJSZEGO viewportu (z paskami).
+     Bezpieczniejsze na mobile. */
+  min-height: 100svh;
 
-.hero {
-  position: relative;
-
-  .base,
-  .framework,
-  .vite {
-    inset-inline: 0;
-    margin: 0 auto;
-  }
-
-  .base {
-    width: 170px;
-    position: relative;
-    z-index: 0;
-  }
-
-  .framework,
-  .vite {
-    position: absolute;
-  }
-
-  .framework {
-    z-index: 1;
-    top: 34px;
-    height: 28px;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(44deg) rotateY(39deg)
-      scale(1.4);
-  }
-
-  .vite {
-    z-index: 0;
-    top: 107px;
-    height: 26px;
-    width: auto;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(40deg) rotateY(39deg)
-      scale(0.8);
-  }
-}
-
-#center {
+  /* display: flex — włącza Flexbox na tym elemencie.
+     Flexbox to system układu CSS do ustawiania dzieci w jednym kierunku (wierszu lub kolumnie).
+     Elementy wewnątrz (dzieci) stają się "flex items" i podporządkowują się regułom Flexbox.
+     Flexbox jest lepszy od float i position dla większości layoutów. */
   display: flex;
+
+  /* flex-direction: column — dzieci układają się pionowo (jeden pod drugim).
+     Domyślnie flex-direction: row — dzieci w poziomie, obok siebie.
+     column sprawia że: Header jest na górze, blog-layout poniżej. */
   flex-direction: column;
-  gap: 25px;
-  place-content: center;
-  place-items: center;
-  flex-grow: 1;
-
-  @media (max-width: 1024px) {
-    padding: 32px 20px 24px;
-    gap: 18px;
-  }
 }
 
-#next-steps {
+
+/* ===== HEADER ===== */
+
+.blog-header {
+  /* display: flex na headerze — dzieci (burger, brand) układają się poziomo. */
   display: flex;
-  border-top: 1px solid var(--border);
-  text-align: left;
 
-  & > div {
-    flex: 1 1 0;
-    padding: 32px;
-    @media (max-width: 1024px) {
-      padding: 24px 20px;
-    }
-  }
+  /* align-items: center — wyrównuje dzieci PROSTOPADLE do głównej osi.
+     Gdy flex-direction: row (domyślnie), główna oś = pozioma, prostopadła = pionowa.
+     center = wszystkie dzieci wycentrowane pionowo w headerze.
+     Bez tego dzieci ustawiają się przy górnej krawędzi headera. */
+  align-items: center;
 
-  .icon {
-    margin-bottom: 16px;
-    width: 22px;
-    height: 22px;
-  }
+  /* gap: 16px — odstęp między dziećmi flex.
+     Lepszy od margin bo nie trzeba go zdejmować z pierwszego/ostatniego dziecka. */
+  gap: 16px;
 
-  @media (max-width: 1024px) {
-    flex-direction: column;
-    text-align: center;
-  }
+  /* padding: 0 24px — wewnętrzny margines: góra/dół = 0, lewo/prawo = 24px.
+     Skrót CSS: padding: top right bottom left (zgodnie z ruchem wskazówek zegara).
+     padding: 0 24px = padding: 0 24px 0 24px */
+  padding: 0 24px;
+
+  /* height: 64px — stała wysokość headera.
+     Bez tego header byłby tak wysoki jak jego zawartość. */
+  height: 64px;
+
+  /* border-bottom — linia oddzielająca header od treści.
+     Skrót: grubość styl kolor.
+     var(--border) to CSS Custom Property (zmienna) z index.css. */
+  border-bottom: 1px solid var(--border);
+
+  /* position: sticky — element "przykleja się" do top: 0 podczas scrollowania.
+     Normalnie (position: static) element scrolluje się razem ze stroną i znika.
+     sticky: scrolluje się z treścią dopóki nie dotrze do top: 0, potem stoi w miejscu.
+     Różnica od position: fixed: fixed jest zawsze w tym samym miejscu viewportu,
+     sticky jest częścią normalnego flow dokumentu (nie "wylatuje" z layoutu). */
+  position: sticky;
+  top: 0;
+
+  /* background: var(--bg) — kolor tła z CSS variable.
+     KLUCZOWE: bez background header byłby przezroczysty.
+     Podczas scrollowania treść "przejeżdżałaby pod" headerem i byłaby widoczna.
+     Ustawiamy ten sam kolor co tło strony — header zakrywa treść pod sobą. */
+  background: var(--bg);
+
+  /* z-index: 100 — "warstwa" elementu na osi Z (głębokość).
+     Wyższy z-index = element na wierzchu.
+     Treść ma domyślnie z-index: 0 (lub auto).
+     Header z z-index: 100 będzie ZAWSZE nad treścią, nawet gdy ta scrolluje pod nim.
+     Bez z-index header mógłby schować się pod elementami z wyższym z-index. */
+  z-index: 100;
 }
 
-#docs {
-  border-right: 1px solid var(--border);
 
-  @media (max-width: 1024px) {
-    border-right: none;
-    border-bottom: 1px solid var(--border);
-  }
-}
-
-#next-steps ul {
-  list-style: none;
-  padding: 0;
+.blog-layout {
   display: flex;
-  gap: 8px;
-  margin: 32px 0 0;
 
-  .logo {
-    height: 18px;
-  }
+  flex: 1;
 
-  a {
-    color: var(--text-h);
-    font-size: 16px;
-    border-radius: 6px;
-    background: var(--social-bg);
-    display: flex;
-    padding: 6px 12px;
-    align-items: center;
-    gap: 8px;
-    text-decoration: none;
-    transition: box-shadow 0.3s;
+  max-width: 1200px;
+  margin: 0 auto;
 
-    &:hover {
-      box-shadow: var(--shadow);
-    }
-    .button-icon {
-      height: 18px;
-      width: 18px;
-    }
-  }
+  padding: 0 24px;
 
-  @media (max-width: 1024px) {
-    margin-top: 20px;
-    flex-wrap: wrap;
-    justify-content: center;
+  gap: 32px;
 
-    li {
-      flex: 1 1 calc(50% - 8px);
-    }
-
-    a {
-      width: 100%;
-      justify-content: center;
-      box-sizing: border-box;
-    }
-  }
-}
-
-#spacer {
-  height: 88px;
-  border-top: 1px solid var(--border);
-  @media (max-width: 1024px) {
-    height: 48px;
-  }
-}
-
-.ticks {
-  position: relative;
   width: 100%;
 
-  &::before,
-  &::after {
-    content: '';
-    position: absolute;
-    top: -4.5px;
-    border: 5px solid transparent;
-  }
+  box-sizing: border-box;
+}
 
-  &::before {
-    left: 0;
-    border-left-color: var(--border);
-  }
-  &::after {
-    right: 0;
-    border-right-color: var(--border);
-  }
+.blog-main {
+  flex: 1;
+  min-width: 0;
+  padding: 32px 0;
+}
+
+/* SIDEBAR */
+.sidebar-desktop {
+   width: 240px;
+   flex-shrink: 0;
+
+   border-left: 1px solid var(--border);
+   padding: 32px 0 0 32px;
+
+   @media (max-width: 767px) {
+      .sidebar-dekstop { display: none; }
+   }
+}
+
+.sidebar-overlay {
+   position: fixed;
+   inset: 0;
+   background: rgba(0, 0, 0, 0.4);
+   z-index: 200;
+}
+
+.sidebar-drawer {
+   position: fixed;
+   top: 0;
+   left: 0;
+   bottom: 0;
+   width: 280px;
+   background: var(--bg);
+   padding: 24px;
+   overflow-y: auto;
+   z-index: 201;
+   box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
+}
+
+.post-list {
+   display: flex;
+   flex-direction: column;
+   gap: 20px;
+}
+
+.post-card {
+   padding: 24px;
+   border: 1px solid var(--border);
+   cursor: pointer;
+   border-radius: 12px;
+   transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+
+/* :hover pseudoklasa css*/
+.post-card:hover {
+   border-color: var(--acent-border);
+   box-shadow: var(--shadow);
+   transform: translateY(-2px);
+}
+
+.post-topic {
+   font-size: 12px;
+   font-weight: 600;
+   text-transform: uppercase;
+   letter-spacing: 0.8px;
+   color: var(--acent);
+   padding: 3px 10px;
+   border-radius: 20px;
+   border: 1px solid var(--acent-border);
+}
+
+.topic-btn {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+
+   width: 100%;
+   padding: 8px 12px;
+
+   border: none;
+   background: transparent;
+   cursor: pointer;
+   border-radius: 8px;
+   color: var(--text);
+
+   font-family: var(--sans);
+   font-size: 14px;
+   text-align: left;
+
+   transition: background 0.15s, color 0.15s;
+}
+
+.topic-btn:hover
+.topic-btn.active {
+   background: var(--acent-bg);
+   color: var(--accent);
+}
+
+.topic-btn.active {
+   font-weight: 600;
+}
+
+.topic-count {
+   font-size: 12px;
+   background: var(--border);
+   color: var(--text);
+   padding: 1px 7px;
+   border-radius: 20px;
 }
